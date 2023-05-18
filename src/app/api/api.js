@@ -1,0 +1,1 @@
+export const BASE_URL = "https://contact-app.mmsdev.site/api/v1/";
