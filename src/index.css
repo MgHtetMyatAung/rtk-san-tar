@@ -1,3 +1,17 @@
+@import url("../node_modules/sweetalert2/dist/sweetalert2.min.css");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.swal2-title{
+    @apply text-lg md:text-xl;
+}
+
+.swal2-html-container{
+    @apply text-base md:text-lg;
+}
+
+/* .swal2-popup{
+    @apply w-[300px] h-auto;
+} */

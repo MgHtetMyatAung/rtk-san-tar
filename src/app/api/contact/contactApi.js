@@ -9,11 +9,11 @@ export const contactApi = createApi({
   tagTypes: ["contact"],
   endpoints: (builder) => ({
     getAllContacts: builder.query({
-      query: (token) => ({
-        url: "contact",
+      query: ({ token, page }) => ({
+        url: `contact?page=${page}`,
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       }),
       providesTags: ["contact"],
     }),
@@ -26,27 +26,36 @@ export const contactApi = createApi({
     }),
 
     createContact: builder.mutation({
-      query: (data) => ({
+      query: ({ data, token }) => ({
         url: "contact",
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: data,
       }),
       invalidatesTags: ["contact"],
     }),
 
     updateContact: builder.mutation({
-      query: (data) => ({
-        url: `contact/${data.id}`,
+      query: ({ data, token, id }) => ({
+        url: `contact/${id}`,
         method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: data,
       }),
       invalidatesTags: ["contact"],
     }),
 
     deleteContact: builder.mutation({
-      query: (id) => ({
+      query: ({id,token}) => ({
         url: `contact/${id}`,
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }),
       invalidatesTags: ["contact"],
     }),
