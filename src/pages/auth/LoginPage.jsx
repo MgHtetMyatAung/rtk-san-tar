@@ -5,6 +5,14 @@ import { useFormik } from "formik";
 import { useLoginActionMutation } from "../../app/api/auth/authApi";
 import { AuthNoti } from "../../components/noti/AuthNoit";
 import { BeatLoader } from "react-spinners";
+import * as Yup from "yup";
+
+const LoginSchema = Yup.object().shape({
+  email: Yup.string().email("Invalid email").required("Email is required"),
+  password: Yup.string()
+    .min(8, "Password must be at least 8 characters")
+    .required("Password is required"),
+});
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -14,18 +22,21 @@ const LoginPage = () => {
       email: "",
       password: "",
     },
+    validationSchema: LoginSchema,
     onSubmit: async (values) => {
       try {
         const res = await useLogin(values);
         if (res?.data.success) {
-            AuthNoti(res?.data?.message);
-            localStorage.setItem("token", JSON.stringify(res?.data?.token));
-            navigate("/");
+          formik.resetForm();
+          AuthNoti(res?.data?.message);
+          localStorage.setItem("token", JSON.stringify(res?.data?.token));
+          navigate("/");
         } else {
           AuthNoti(res?.data?.message, "error");
         }
-      } catch (error) {}
-      formik.resetForm();
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
   return (
@@ -53,11 +64,13 @@ const LoginPage = () => {
                   name="email"
                   type="email"
                   autoComplete="email"
-                  required
                   className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400"
                   onChange={formik.handleChange}
                   value={formik.values.email}
                 />
+                {formik.touched.email && formik.errors.email ? (
+                  <span className=" text-red-500">{formik.errors.email}</span>
+                ) : null}
               </div>
             </div>
 
@@ -76,21 +89,25 @@ const LoginPage = () => {
                   name="password"
                   type="password"
                   autoComplete="current-password"
-                  required
                   className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400"
                   onChange={formik.handleChange}
                   value={formik.values.password}
                 />
+                {formik.touched.password && formik.errors.password ? (
+                  <span className=" text-red-500">
+                    {formik.errors.password}
+                  </span>
+                ) : null}
               </div>
             </div>
 
             <div className="pt-5">
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="flex w-full h-[40px] items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 disabled={isLoading && true}
               >
-                {isLoading ? <BeatLoader size={16} color="#fff" /> : "Sign in"}
+                {isLoading ? <BeatLoader size={11} color="#fff" /> : "Sign in"}
               </button>
             </div>
           </form>

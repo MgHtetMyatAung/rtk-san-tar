@@ -6,10 +6,10 @@ const Pagination = ({ page, setPage }) => {
   return (
     <div className="flex flex-col items-center my-8">
       {/* Help text */}
-      <span className="text-sm text-gray-700 dark:text-gray-400">
-        <span className="font-semibold text-gray-900 dark:text-white">10</span>{" "}
+      <span className="text-sm text-gray-500">
+        <span className="font-semibold text-gray-500">10</span>{" "}
         students from Page{" "}
-        <span className="font-semibold text-gray-900 dark:text-white">
+        <span className="font-semibold text-gray-500">
           {page}
         </span>{" "}
       </span>

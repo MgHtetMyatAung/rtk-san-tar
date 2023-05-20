@@ -13,7 +13,7 @@ const SignUpSchema = Yup.object().shape({
     .max(50, "Too long!")
     .required("Name is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),
-  password: Yup.string().min(8, "Password must be at least 8 characters"),
+  password: Yup.string().min(8, "Password must be at least 8 characters").required("Password is required"),
   password_confirmation: Yup.string()
     .oneOf([Yup.ref("password"), null], "Passwords must match")
     .required("Password confirmation is required"),
@@ -21,7 +21,7 @@ const SignUpSchema = Yup.object().shape({
 
 const SignUpPage = () => {
   const [useSignUp, { isLoading, isError }] = useRegisterActionMutation();
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -32,17 +32,18 @@ const SignUpPage = () => {
     validationSchema: SignUpSchema,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-          const res = await useSignUp(values);
+        const res = await useSignUp(values);
         if (res?.data?.success) {
-            AuthNoti(res?.data?.message);
-            navigate("/login");
+          formik.resetForm();
+          AuthNoti(res?.data?.message);
+          navigate("/login");
         } else {
           AuthNoti(res?.error?.data?.message, "error");
         }
       } catch (error) {
         console.log(error);
       }
-      formik.resetForm();
+      
     },
   });
   return (
@@ -51,7 +52,7 @@ const SignUpPage = () => {
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           {/* <img className="mx-auto h-20 w-auto" src={Logo} alt="Your Company" /> */}
           <h2 className="mt-5 text-center text-2xl font-semibold leading-9 tracking-tight text-gray-900">
-            Sign in to your account
+            Create your new account
           </h2>
         </div>
 
@@ -69,11 +70,15 @@ const SignUpPage = () => {
                   id="name"
                   name="name"
                   type="text"
-                  required
                   className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400"
                   onChange={formik.handleChange}
                   value={formik.values.name}
                 />
+                {formik.touched.name && formik.errors.name ? (
+                  <div className=" text-red-500 text-sm">
+                    {formik.errors.name}
+                  </div>
+                ) : null}
               </div>
             </div>
 
@@ -90,11 +95,15 @@ const SignUpPage = () => {
                   name="email"
                   type="email"
                   autoComplete="email"
-                  required
                   className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400"
                   onChange={formik.handleChange}
                   value={formik.values.email}
                 />
+                {formik.touched.email && formik.errors.email ? (
+                  <div className=" text-red-500 text-sm">
+                    {formik.errors.email}
+                  </div>
+                ) : null}
               </div>
             </div>
 
@@ -111,11 +120,15 @@ const SignUpPage = () => {
                   name="password"
                   type="password"
                   autoComplete="password"
-                  required
                   className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400"
                   onChange={formik.handleChange}
                   value={formik.values.password}
                 />
+                {formik.touched.password && formik.errors.password ? (
+                  <div className=" text-red-500 text-sm">
+                    {formik.errors.password}
+                  </div>
+                ) : null}
               </div>
             </div>
 
@@ -134,25 +147,26 @@ const SignUpPage = () => {
                   name="password_confirmation"
                   type="password"
                   autoComplete="current-password"
-                  required
                   className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400"
                   onChange={formik.handleChange}
                   value={formik.values.password_confirmation}
                 />
+                {formik.touched.password_confirmation &&
+                formik.errors.password_confirmation ? (
+                  <div className=" text-red-500 text-sm">
+                    {formik.errors.password_confirmation}
+                  </div>
+                ) : null}
               </div>
             </div>
 
             <div className="pt-5">
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="flex w-full h-[40px] items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 disabled={isLoading}
               >
-                {isLoading ? (
-                  <BeatLoader size={16} color="#fff" />
-                ) : (
-                  "Sign in"
-                )}
+                {isLoading ? <BeatLoader size={11} color="#fff" /> : "Sign up"}
               </button>
             </div>
           </form>
@@ -164,7 +178,7 @@ const SignUpPage = () => {
               className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 ms-5"
               onClick={() => navigate("/login")}
             >
-              Sign In
+              Login
             </a>
           </p>
         </div>
